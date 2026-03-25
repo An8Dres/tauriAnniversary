@@ -22,28 +22,30 @@ jobs:
         with:
           targets: aarch64-linux-android, armv7-linux-androideabi, i686-linux-android, x86_64-linux-android
 
-      - name: Configurar Android NDK
-        # Le decimos a Tauri dónde están las herramientas móviles gratuitas de GitHub
-        run: echo "NDK_HOME=$ANDROID_NDK_HOME" >> $GITHUB_ENV
-
       - name: Install dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y libwebkit2gtk-4.1-dev build-essential curl wget file libxdo-dev libssl-dev libayatana-appindicator3-dev librsvg2-dev
 
-      - name: Instalar Tauri de forma global
-        run: npm install -g @tauri-apps/cli
+      - name: Install Tauri CLI (Rust version)
+        # Instalamos la CLI de Rust para evitar errores de Node.js/PATH
+        run: cargo install tauri-cli --version 2.0.0 --locked
 
-      - name: Generar proyecto Android en la Nube
-        # Esto hace lo que cancelaste en tu Pentium, pero en el servidor súper rápido de GitHub
-        run: tauri android init
+      - name: Init Android Project
+        # Genera la carpeta 'gen/android' que no tienes en tu Pentium
+        run: cargo tauri android init
+        env:
+          NDK_HOME: ${{ env.ANDROID_NDK_HOME }}
 
-      - name: Compilar el APK
-        # Este es el comando REAL para móviles, no el de escritorio
-        run: tauri android build
+      - name: Build APK
+        # Comando directo de Rust para generar el archivo .apk
+        run: cargo tauri android build
+        env:
+          NDK_HOME: ${{ env.ANDROID_NDK_HOME }}
 
-      - name: Guardar el APK para Descargar
+      - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Mi-App-VanillaJS-APK
-          path: src-tauri/gen/android/app/build/outputs/apk/**/*.apk
+          name: App-Aniversario-Android
+          # Esta ruta es donde Gradle guarda el APK final por defecto
+          path: src-tauri/gen/android/app/build/outputs/apk/release/*.apk
