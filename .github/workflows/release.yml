@@ -31,7 +31,6 @@ jobs:
         run: cargo install tauri-cli --version 2.0.0 --locked
 
       - name: Build APK
-        # Aquí forzamos las rutas internas de GitHub para que Android no se pierda
         run: |
           export NDK_HOME=$ANDROID_NDK_HOME
           export ANDROID_HOME=$ANDROID_HOME
@@ -44,5 +43,8 @@ jobs:
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Mi-App-Android
-          path: src-tauri/gen/android/app/build/outputs/apk/release/*.apk
+          name: App-Aniversario-Android
+          # Esta ruta ahora es mas flexible (busca en debug o release)
+          path: |
+            src-tauri/gen/android/app/build/outputs/apk/**/*.apk
+          if-no-files-found: error
