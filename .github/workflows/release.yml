@@ -17,10 +17,14 @@ jobs:
           distribution: 'zulu'
           java-version: '17'
 
+      - name: Setup Android NDK
+        uses: nttld/setup-ndk@v1
+        with:
+          ndk-version: r25b # Versión estable compatible con Tauri 2
+
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
         with:
-          # ESTA ES LA LÍNEA CLAVE QUE FALTABA:
           targets: aarch64-linux-android
 
       - name: Install dependencies
@@ -32,6 +36,7 @@ jobs:
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # ESTAS LÍNEAS LE DICEN A RUST DÓNDE ESTÁ EL TRADUCTOR DE ANDROID:
+          NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
         with:
-          # Le decimos a Tauri que use el target que instalamos arriba
           args: --target aarch64-linux-android
