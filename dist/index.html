@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para mi persona favorita ❤️</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@300;500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <canvas id="heartCanvas"></canvas>
+
+    <main class="glass-container">
+        <header>
+            <h1 class="title">Feliz Día de la Mujer</h1>
+            <p class="subtitle">¡A la mujer que cambió mi mundo!</>
+        </header>
+
+        <section class="counter-section">
+            <h3>Llevamos compartiendo:</h3>
+            <div id="timer">
+                <div class="time-block"><span id="days">00</span><p>Días</p></div>
+                <div class="time-block"><span id="hours">00</span><p>Hs</p></div>
+                <div class="time-block"><span id="minutes">00</span><p>Min</p></div>
+                <div class="time-block"><span id="seconds">00</span><p>Seg</p></div>
+            </div>
+        </section>
+
+        <section class="letter-section">
+            <div class="envelope" id="envelope">
+                <div class="back"></div>
+                <div class="letter">
+                    <p>Mi amor,</p>
+                    <p>Eres valiente, inteligente y la razón de mi vivir. Gracias por caminar a mi lado. ¡Te amo!</p>
+                    <p>❣️</p>
+                </div>
+                <div class="front"></div>
+                <div class="top"></div>
+            </div>
+            <p class="tap-hint">Milagros, haz clic en el sobre para leer</p>
+        </section>
+
+        <section class="gallery">
+            <div class="polaroid" style="--angle: -5deg">
+                <img src="we.jpg" alt="Nosotros">
+                <p>Nuestra primera cita</p>
+            </div>
+            <div class="polaroid" style="--angle: 3deg">
+                <img src="sonrisa.jpg" alt="Nosotros">
+                <p>Tu sonrisa favorita</p>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
