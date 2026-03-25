@@ -17,26 +17,33 @@ jobs:
           distribution: 'zulu'
           java-version: '17'
 
-      - name: Setup Android NDK
-        uses: nttld/setup-ndk@v1
-        with:
-          ndk-version: r25b # Versión estable compatible con Tauri 2
-
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
         with:
-          targets: aarch64-linux-android
+          targets: aarch64-linux-android, armv7-linux-androideabi, i686-linux-android, x86_64-linux-android
+
+      - name: Configurar Android NDK
+        # Le decimos a Tauri dónde están las herramientas móviles gratuitas de GitHub
+        run: echo "NDK_HOME=$ANDROID_NDK_HOME" >> $GITHUB_ENV
 
       - name: Install dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y libwebkit2gtk-4.1-dev build-essential curl wget file libxdo-dev libssl-dev libayatana-appindicator3-dev librsvg2-dev
 
-      - name: Build APK
-        uses: tauri-apps/tauri-action@v0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # ESTAS LÍNEAS LE DICEN A RUST DÓNDE ESTÁ EL TRADUCTOR DE ANDROID:
-          NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
+      - name: Instalar Tauri de forma global
+        run: npm install -g @tauri-apps/cli
+
+      - name: Generar proyecto Android en la Nube
+        # Esto hace lo que cancelaste en tu Pentium, pero en el servidor súper rápido de GitHub
+        run: tauri android init
+
+      - name: Compilar el APK
+        # Este es el comando REAL para móviles, no el de escritorio
+        run: tauri android build
+
+      - name: Guardar el APK para Descargar
+        uses: actions/upload-artifact@v4
         with:
-          args: --target aarch64-linux-android
+          name: Mi-App-VanillaJS-APK
+          path: src-tauri/gen/android/app/build/outputs/apk/**/*.apk
