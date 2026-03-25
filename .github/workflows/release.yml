@@ -1,4 +1,4 @@
-name: "Publicar App Android"
+name: "Build Android APK"
 
 on:
   push:
@@ -6,9 +6,7 @@ on:
       - main
 
 jobs:
-  publish-android:
-    permissions:
-      contents: write
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -19,24 +17,21 @@ jobs:
           distribution: 'zulu'
           java-version: '17'
 
-      - name: Setup Rust
+      - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
         with:
-          targets: aarch64-linux-android, armv7-linux-androideabi, i686-linux-android, x86_64-linux-android
+          # ESTA ES LA LÍNEA CLAVE QUE FALTABA:
+          targets: aarch64-linux-android
 
       - name: Install dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y libwebkit2gtk-4.1-dev build-essential curl wget file libxdo-dev libssl-dev libayatana-appindicator3-dev librsvg2-dev
 
-      - name: Build Android APK
+      - name: Build APK
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tagName: v__VERSION__ # Esto creará una versión en GitHub
-          releaseName: "App v__VERSION__"
-          releaseBody: "Compilación automática desde GitHub Actions."
-          releaseDraft: true
-          prerelease: false
-          args: --target android
+          # Le decimos a Tauri que use el target que instalamos arriba
+          args: --target aarch64-linux-android
