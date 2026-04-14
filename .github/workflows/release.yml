@@ -30,12 +30,13 @@ jobs:
       - name: Install Tauri CLI (Rust)
         run: cargo install tauri-cli --version 2.0.0 --locked
 
-      - name: Build APK
+      - name: Build Universal APK
         run: |
           export NDK_HOME=$ANDROID_NDK_HOME
           export ANDROID_HOME=$ANDROID_HOME
           cargo tauri android init
-          cargo tauri android build
+          # El truco esta aqui: pedimos explicitamente el APK
+          cargo tauri android build --apk
         env:
           NDK_HOME: ${{ env.ANDROID_NDK_HOME }}
           ANDROID_HOME: ${{ env.ANDROID_HOME }}
@@ -43,8 +44,7 @@ jobs:
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: App-Aniversario-Android
-          # Esta ruta ahora es mas flexible (busca en debug o release)
-          path: |
-            src-tauri/gen/android/app/build/outputs/apk/**/*.apk
+          name: App-Aniversario-Final
+          # Buscamos especificamente el archivo que dice 'universal'
+          path: src-tauri/gen/android/app/build/outputs/apk/**/app-universal-debug.apk
           if-no-files-found: error
